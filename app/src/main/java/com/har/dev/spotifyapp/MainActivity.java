@@ -1,11 +1,13 @@
 package com.har.dev.spotifyapp;
 
-import android.support.v7.app.AppCompatActivity;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+    implements ArtistFinderFragment.OnArtistSelectedListener {
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -33,5 +35,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     return super.onOptionsItemSelected(item);
+  }
+
+  @Override
+  public void onArtistSelected(Uri uri) {
+
   }
 }
