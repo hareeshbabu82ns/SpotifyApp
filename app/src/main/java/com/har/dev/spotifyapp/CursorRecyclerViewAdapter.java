@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.DataSetObserver;
 import android.provider.BaseColumns;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
 /**
  * Created by hareesh on 6/19/15.
@@ -12,6 +13,7 @@ import android.support.v7.widget.RecyclerView;
 
 public abstract class CursorRecyclerViewAdapter<ViewHolder extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<ViewHolder> {
 
+  OnItemClickListener mItemClickListener = null;
   private Context mContext;
   private Cursor mCursor;
   private boolean mDataValid;
@@ -57,7 +59,7 @@ public abstract class CursorRecyclerViewAdapter<ViewHolder extends RecyclerView.
   public abstract void onBindViewHolder(ViewHolder viewHolder, Cursor cursor);
 
   @Override
-  public void onBindViewHolder(ViewHolder viewHolder, int position) {
+  public void onBindViewHolder(final ViewHolder viewHolder, int position) {
     if (!mDataValid) {
       throw new IllegalStateException("this should only be called when the cursor is valid");
     }
@@ -65,6 +67,14 @@ public abstract class CursorRecyclerViewAdapter<ViewHolder extends RecyclerView.
       throw new IllegalStateException("couldn't move cursor to position " + position);
     }
     onBindViewHolder(viewHolder, mCursor);
+    if (mItemClickListener != null) {
+      viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+          mItemClickListener.onItemClick(viewHolder, mCursor);
+        }
+      });
+    }
   }
 
   /**
@@ -106,6 +116,18 @@ public abstract class CursorRecyclerViewAdapter<ViewHolder extends RecyclerView.
       //There is no notifyDataSetInvalidated() method in RecyclerView.Adapter
     }
     return oldCursor;
+  }
+
+  public OnItemClickListener getOnItemClickListener() {
+    return mItemClickListener;
+  }
+
+  public void setOnItemClickListener(OnItemClickListener mItemClickListener) {
+    this.mItemClickListener = mItemClickListener;
+  }
+
+  public interface OnItemClickListener<ViewHolder extends RecyclerView.ViewHolder> {
+    void onItemClick(ViewHolder viewHolder, Cursor cursor);
   }
 
   private class NotifyingDataSetObserver extends DataSetObserver {

@@ -1,0 +1,45 @@
+<resources>
+
+  <!-- Base application theme. -->
+  <style name="MaterialCompatTheme" parent="MaterialCompatTheme.Base">
+    <!-- Customize your theme here. -->
+
+    <!--referred from ../android-22/res/values/themes.xml in External Libraries-->
+    <item name="android:progressBarStyleHorizontal">@style/MaterialHorizontalProgressBar</item>
+    <item name="android:seekBarStyle">@style/MaterialSeekBar</item>
+  </style>
+
+  <style name="MaterialCompatTheme.Base" parent="Theme.AppCompat.Light.NoActionBar">
+
+    <item name="colorPrimary">@color/color_primary</item>
+    <item name="colorPrimaryDark">@color/color_primary_dark</item>
+    <item name="colorAccent">@color/color_accent</item>
+    <!--<item name="colorButtonNormal">@color/color_text_primary</item>-->
+    <!--<item name="textColorPrimary">@color/color_text_primary</item>-->
+    <!--<item name="textColorSecondary">@color/color_text_secondary</item>-->
+
+  </style>
+
+  <style name="Widget.CardContent" parent="android:Widget">
+    <item name="android:paddingLeft">16dp</item>
+    <item name="android:paddingRight">16dp</item>
+    <item name="android:paddingTop">24dp</item>
+    <item name="android:paddingBottom">24dp</item>
+    <item name="android:orientation">vertical</item>
+  </style>
+
+  <!--referred from ../android-22/res/values/styles.xml in External Libraries-->
+  <style name="MaterialHorizontalProgressBar"
+         parent="android:Widget.Holo.Light.ProgressBar.Horizontal">
+    <item name="android:progressDrawable">@drawable/material_progress_bar</item>
+    <item name="android:minHeight">5dip</item>
+    <item name="android:maxHeight">5dip</item>
+  </style>
+
+  <style name="MaterialSeekBar" parent="android:Widget.Holo.Light.SeekBar">
+    <item name="android:progressDrawable">@drawable/material_progress_bar</item>
+    <item name="android:thumb">@drawable/material_seek_thumb</item>
+    <item name="android:minHeight">5dip</item>
+    <item name="android:maxHeight">5dip</item>
+  </style>
+</resources>

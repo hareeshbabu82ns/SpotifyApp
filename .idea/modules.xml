@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/SpotifyApp.iml" filepath="$PROJECT_DIR$/SpotifyApp.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/materialcompattheme/materialcompattheme.iml" filepath="$PROJECT_DIR$/materialcompattheme/materialcompattheme.iml" />
     </modules>
   </component>
 </project>

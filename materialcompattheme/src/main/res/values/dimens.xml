@@ -1,0 +1,17 @@
+<resources>
+  <!-- Default screen margins, per the Android Design guidelines. -->
+  <dimen name="activity_horizontal_margin">16dp</dimen>
+  <dimen name="activity_vertical_margin">16dp</dimen>
+
+  <dimen name="detail_backdrop_height">256dp</dimen>
+  <dimen name="card_margin">16dp</dimen>
+  <dimen name="fab_margin">16dp</dimen>
+
+  <dimen name="material_seek_thumb_size">20dp</dimen>
+  <dimen name="material_seek_thumb_stroke">5dp</dimen>
+
+  <!--Lists-->
+  <dimen name="list_item_avatar_size">48dp</dimen>
+  <dimen name="list_item_margin">16dp</dimen>
+
+</resources>

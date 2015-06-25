@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <color name="color_primary">@color/material_amber_500</color>
+  <color name="color_primary_dark">@color/material_amber_700</color>
+  <color name="color_accent">@color/material_deep_orange_A400</color>
+  <color name="color_control">@color/material_blue_500</color>
+  <color name="color_text_primary">@color/material_blue_500</color>
+  <color name="color_text_secondary">@color/material_blue_900</color>
+  <color name="color_navigationBar">#FF8A80</color>
+
+  <color name="color_seek_thumb_alpha_stroke">#75757575</color>
+</resources>

@@ -92,6 +92,14 @@ public class ArtistFinderFragment extends Fragment {
     rv.setLayoutManager(new LinearLayoutManager(getActivity()));
     mAdapter = new ArtistsAdapter(getActivity(), null);
     rv.setAdapter(mAdapter);
+    mAdapter.setOnItemClickListener(new CursorRecyclerViewAdapter.OnItemClickListener() {
+      @Override
+      public void onItemClick(RecyclerView.ViewHolder viewHolder, Cursor cursor) {
+//        viewHolder.itemView.setClickable(true);
+        ArtistsAdapter.ViewHolder holder = (ArtistsAdapter.ViewHolder) viewHolder;
+        holder.artistName.setText(holder.artistName.getText() + " clicked");
+      }
+    });
   }
 
   @Override

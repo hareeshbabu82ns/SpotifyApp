@@ -39,6 +39,6 @@ public class MainActivity extends AppCompatActivity
 
   @Override
   public void onArtistSelected(Uri uri) {
-
+    //TODO: call activity to show Albums of selected Artist
   }
 }
