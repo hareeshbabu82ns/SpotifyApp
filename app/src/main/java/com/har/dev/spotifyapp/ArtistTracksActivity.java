@@ -1,6 +1,5 @@
 package com.har.dev.spotifyapp;
 
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -8,22 +7,32 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends AppCompatActivity
-    implements ArtistFinderFragment.OnArtistSelectedListener {
+public class ArtistTracksActivity extends AppCompatActivity
+    implements ArtistTracksFragment.OnTrackSelectedListener {
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_main);
+    setContentView(R.layout.activity_artist_tracks);
+
     Toolbar bar = (Toolbar) findViewById(R.id.app_bar);
-    bar.setTitle(R.string.title_artists);
+    bar.setTitle(R.string.title_tracks);
     setSupportActionBar(bar);
+
+    if (savedInstanceState == null) {
+      Uri artistUri = getIntent().getParcelableExtra(Utils.EXTRA_ARTIST_URI);
+
+      getFragmentManager().beginTransaction()
+          .replace(R.id.fragment_tracks_placeholder,
+              ArtistTracksFragment.newInstance(artistUri), null)
+          .commit();
+    }
   }
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     // Inflate the menu; this adds items to the action bar if it is present.
-    getMenuInflater().inflate(R.menu.menu_main, menu);
+    getMenuInflater().inflate(R.menu.menu_albums, menu);
     return true;
   }
 
@@ -43,11 +52,7 @@ public class MainActivity extends AppCompatActivity
   }
 
   @Override
-  public void onArtistSelected(Uri uri) {
-    //call activity to show Albums of selected Artist
-//    final Intent intent = new Intent(this, AlbumsActivity.class);
-    final Intent intent = new Intent(this, ArtistTracksActivity.class);
-    intent.putExtra(Utils.EXTRA_ARTIST_URI, uri);
-    startActivity(intent);
+  public void onTrackSelected(Uri trackUri, Uri songUri) {
+    //TODO: navigate to Song Play Activity
   }
 }

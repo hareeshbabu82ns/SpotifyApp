@@ -59,7 +59,7 @@ public abstract class CursorRecyclerViewAdapter<ViewHolder extends RecyclerView.
   public abstract void onBindViewHolder(ViewHolder viewHolder, Cursor cursor);
 
   @Override
-  public void onBindViewHolder(final ViewHolder viewHolder, int position) {
+  public void onBindViewHolder(final ViewHolder viewHolder, final int position) {
     if (!mDataValid) {
       throw new IllegalStateException("this should only be called when the cursor is valid");
     }
@@ -71,6 +71,7 @@ public abstract class CursorRecyclerViewAdapter<ViewHolder extends RecyclerView.
       viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+          mCursor.moveToPosition(viewHolder.getAdapterPosition());
           mItemClickListener.onItemClick(viewHolder, mCursor);
         }
       });

@@ -2,6 +2,9 @@ package com.har.dev.spotifyapp;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.LoaderManager;
+import android.content.CursorLoader;
+import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -22,7 +25,7 @@ import com.har.dev.spotifyapp.data.SpotifyDBContract;
  * Use the {@link ArtistFinderFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ArtistFinderFragment extends Fragment {
+public class ArtistFinderFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, CursorRecyclerViewAdapter.OnItemClickListener {
   private static final String ARG_ARTIST_SEARCH_TERM = "artist_search_term";
 
   private String mSearchTerm;
@@ -72,9 +75,15 @@ public class ArtistFinderFragment extends Fragment {
   @Override
   public void onResume() {
     super.onResume();
-    Cursor cursor = getActivity().getContentResolver().query(SpotifyDBContract.Artist.CONTENT_URI
-        , null, null, null, null);
-    mAdapter.swapCursor(cursor);
+//    getLoaderManager().restartLoader(0, null, this);
+  }
+
+  @Override
+  public void onActivityCreated(Bundle savedInstanceState) {
+    super.onActivityCreated(savedInstanceState);
+    //register the loader
+    getLoaderManager().initLoader(0, null, this);
+    mAdapter.setOnItemClickListener(this);
   }
 
   @Override
@@ -92,6 +101,7 @@ public class ArtistFinderFragment extends Fragment {
     rv.setLayoutManager(new LinearLayoutManager(getActivity()));
     mAdapter = new ArtistsAdapter(getActivity(), null);
     rv.setAdapter(mAdapter);
+    rv.setHasFixedSize(true);
     mAdapter.setOnItemClickListener(new CursorRecyclerViewAdapter.OnItemClickListener() {
       @Override
       public void onItemClick(RecyclerView.ViewHolder viewHolder, Cursor cursor) {
@@ -106,6 +116,29 @@ public class ArtistFinderFragment extends Fragment {
   public void onDetach() {
     super.onDetach();
     mListener = null;
+  }
+
+  @Override
+  public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+    return new CursorLoader(getActivity(),
+        SpotifyDBContract.Artist.CONTENT_URI, null, null, null, null);
+  }
+
+  @Override
+  public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+    mAdapter.swapCursor(data);
+  }
+
+  @Override
+  public void onLoaderReset(Loader<Cursor> loader) {
+    mAdapter.swapCursor(null);
+  }
+
+  @Override
+  public void onItemClick(RecyclerView.ViewHolder viewHolder, Cursor cursor) {
+    onArtistSelected(Uri.withAppendedPath(
+        SpotifyDBContract.Artist.CONTENT_URI,
+        Long.toString(cursor.getLong(cursor.getColumnIndex(SpotifyDBContract.Artist._ID)))));
   }
 
   public interface OnArtistSelectedListener {

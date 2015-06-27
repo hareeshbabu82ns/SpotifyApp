@@ -7,4 +7,7 @@
   <!-- TODO: Remove or change this placeholder text -->
   <string name="hello_blank_fragment">Hello blank fragment</string>
   <string name="search_artist_hint">Search for Artists</string>
+  <string name="title_albums">Albums</string>
+  <string name="title_artists">Artists</string>
+  <string name="title_tracks">Tracks</string>
 </resources>

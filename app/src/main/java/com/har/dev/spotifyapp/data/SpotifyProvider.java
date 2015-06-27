@@ -6,6 +6,7 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 
 public class SpotifyProvider extends ContentProvider {
@@ -20,7 +21,23 @@ public class SpotifyProvider extends ContentProvider {
   public static final int ARTIST_TRACKS = 302;
   public static final int ALBUM_TRACKS = 303;
   public static final UriMatcher URI_MATCHER = buildUriMatcher();
+  private static final SQLiteQueryBuilder sAlbumTracksQueryBuilder;
+
+  static {
+    //Inner Join to get fields from multiple tables
+    sAlbumTracksQueryBuilder = new SQLiteQueryBuilder();
+    sAlbumTracksQueryBuilder.setTables(
+        SpotifyDBContract.Album.TABLE_NAME + " INNER JOIN " +
+            SpotifyDBContract.Track.TABLE_NAME +
+            " ON " + SpotifyDBContract.Album.TABLE_NAME +
+            "." + SpotifyDBContract.Album._ID +
+            " = " + SpotifyDBContract.Track.TABLE_NAME +
+            "." + SpotifyDBContract.Track.COLUMN_ALBUM_ID);
+//    sAlbumTracksQueryBuilder.setDistinct(true);
+  }
+
   private SpotifyDBHelper mDBHelper;
+
 
   public SpotifyProvider() {
   }
@@ -208,9 +225,16 @@ public class SpotifyProvider extends ContentProvider {
             new String[]{uri.getPathSegments().get(1)}, null, null, sortOrder);
         break;
       case ARTIST_TRACKS:
-        cursor = db.query(SpotifyDBContract.Track.TABLE_NAME,
-            projection, SpotifyDBContract.Track.COLUMN_ARTIST_ID + " = ?",
-            new String[]{uri.getPathSegments().get(1)}, null, null, sortOrder);
+        if (projection == null) {
+          cursor = db.query(SpotifyDBContract.Track.TABLE_NAME,
+              projection, SpotifyDBContract.Track.COLUMN_ARTIST_ID + " = ?",
+              new String[]{uri.getPathSegments().get(1)}, null, null, sortOrder);
+        } else { //use INNER JOIN Query
+          final String sel = SpotifyDBContract.Track.TABLE_NAME + "." +
+              SpotifyDBContract.Track.COLUMN_ARTIST_ID + " = ?";
+          cursor = sAlbumTracksQueryBuilder.query(db, projection, sel,
+              new String[]{uri.getPathSegments().get(1)}, null, null, sortOrder);
+        }
         break;
       default:
         throw new UnsupportedOperationException("Unknown URI: " + uri);

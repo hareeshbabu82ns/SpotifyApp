@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import java.util.Calendar;
 import java.util.Random;
@@ -86,10 +87,11 @@ public class SpotifyDBHelper extends SQLiteOpenHelper {
   void createDummyData(SQLiteDatabase db) {
     final ContentValues values = new ContentValues();
     Random random = new Random(Calendar.getInstance().getTimeInMillis());
-    int artistRandom = random.nextInt(50), albumRandom, trackRandom;
+    int artistRandom = random.nextInt(10), albumRandom, trackRandom;
     long artistID = 0, albumID = 0;
+    int i = 0, j = 0, k = 0;
     //create Artist entries
-    for (int i = 0; i < artistRandom; i++) {
+    for (; i < artistRandom; i++) {
       values.clear();
       values.put(SpotifyDBContract.Artist.COLUMN_NAME, "Artist " + i);
       values.put(SpotifyDBContract.Artist.COLUMN_POPULARITY, random.nextInt(10));
@@ -103,8 +105,8 @@ public class SpotifyDBHelper extends SQLiteOpenHelper {
         continue;
 
       //create Albums for Artist
-      albumRandom = random.nextInt(50);
-      for (int j = 0; j < albumRandom; j++) {
+      albumRandom = j + random.nextInt(5);
+      for (; j < albumRandom; j++) {
         values.clear();
         values.put(SpotifyDBContract.Album.COLUMN_ARTIST_ID, artistID);
         values.put(SpotifyDBContract.Album.COLUMN_NAME, "Album " + j);
@@ -119,13 +121,13 @@ public class SpotifyDBHelper extends SQLiteOpenHelper {
           continue;
 
         //create Tracks for Album
-        trackRandom = random.nextInt(10);
-        for (int k = 0; k < trackRandom; k++) {
+        trackRandom = k + random.nextInt(5);
+        for (; k < trackRandom; k++) {
           values.clear();
           values.put(SpotifyDBContract.Track.COLUMN_ARTIST_ID, artistID);
           values.put(SpotifyDBContract.Track.COLUMN_ALBUM_ID, albumID);
-          values.put(SpotifyDBContract.Track.COLUMN_NAME, "Track " + j);
-          values.put(SpotifyDBContract.Track.COLUMN_DESCRIPTION, "Track Description " + j);
+          values.put(SpotifyDBContract.Track.COLUMN_NAME, "Track " + k);
+          values.put(SpotifyDBContract.Track.COLUMN_DESCRIPTION, "Track Description " + k);
           values.put(SpotifyDBContract.Track.COLUMN_THUMBNAIL_URI,
               thumbUris[random.nextInt(thumbUris.length)]);
           values.put(SpotifyDBContract.Track.COLUMN_IMAGE_URI,
@@ -133,6 +135,7 @@ public class SpotifyDBHelper extends SQLiteOpenHelper {
           values.put(SpotifyDBContract.Track.COLUMN_SONG_URI,
               songUris[random.nextInt(songUris.length)]);
           db.insert(SpotifyDBContract.Track.TABLE_NAME, null, values);
+          Log.d("DummyDB:", String.format("Artist: %d, Album: %d, Track: %d", i, j, k));
         }
       }
     }
