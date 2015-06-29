@@ -21,7 +21,7 @@ import java.io.IOException;
  * helper methods.
  */
 public class PlayerService extends Service
-    implements MediaPlayer.OnPreparedListener {
+    implements MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener {
   // TODO: Rename actions, choose action names that describe tasks that this
   // IntentService can perform, e.g. ACTION_FETCH_NEW_ITEMS
   private static final String ACTION_PLAY = "com.har.dev.spotifyapp.action.PLAY";
@@ -34,6 +34,7 @@ public class PlayerService extends Service
   private final IBinder mBinder = new PlayerBinder();
   String mCurrentSong = null;
   MediaPlayer mPlayer = null;
+  PlayerCallbacks mPlayerCallbacks;
 
   public PlayerService() {
   }
@@ -90,6 +91,7 @@ public class PlayerService extends Service
     mPlayer = new MediaPlayer();
     mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
     mPlayer.setOnPreparedListener(this);
+    mPlayer.setOnCompletionListener(this);
     Log.d("Player", "Initializing");
   }
 
@@ -114,10 +116,15 @@ public class PlayerService extends Service
    */
   public void handleActionPlay(String song) {
     if (mCurrentSong != null && mCurrentSong.equals(song)) {
-      if (!mPlayer.isPlaying())
+      if (!mPlayer.isPlaying()) {
         mPlayer.start();
-      else
+        if (mPlayerCallbacks != null)
+          mPlayerCallbacks.onPlay(mPlayer);
+      } else {
         mPlayer.pause();
+        if (mPlayerCallbacks != null)
+          mPlayerCallbacks.onPause(mPlayer);
+      }
     } else {//switch song
       mPlayer.reset();//reset first
       try {
@@ -138,8 +145,11 @@ public class PlayerService extends Service
    */
   public void handleActionPause(String song) {
     if (mCurrentSong.equals(song)) {
-      if (mPlayer.isPlaying())
+      if (mPlayer.isPlaying()) {
         mPlayer.pause();
+        if (mPlayerCallbacks != null)
+          mPlayerCallbacks.onPause(mPlayer);
+      }
     }
   }
 
@@ -170,8 +180,37 @@ public class PlayerService extends Service
 
   @Override
   public void onPrepared(MediaPlayer mp) {
-    mp.start();
-    Log.d("Player", "Playing: " + mCurrentSong);
+    if (mPlayerCallbacks == null) {
+      mp.start();
+      Log.d("Player", "Playing: " + mCurrentSong);
+    } else {
+      if (mPlayerCallbacks.onPrepared(mp)) {
+        mp.start();
+        Log.d("Player", "Playing: " + mCurrentSong);
+        mPlayerCallbacks.onPlay(mp);
+      }
+    }
+  }
+
+  @Override
+  public void onCompletion(MediaPlayer mp) {
+    if (mPlayerCallbacks != null)
+      mPlayerCallbacks.onCompleation(mp);
+  }
+
+  public void setPlayerCallbacks(PlayerCallbacks mPlayerCallbacks) {
+    this.mPlayerCallbacks = mPlayerCallbacks;
+  }
+
+  public interface PlayerCallbacks {
+    //return true if need to start playing
+    boolean onPrepared(MediaPlayer mp);
+
+    void onPlay(MediaPlayer mp);
+
+    void onPause(MediaPlayer mp);
+
+    void onCompleation(MediaPlayer mp);
   }
 
   /**

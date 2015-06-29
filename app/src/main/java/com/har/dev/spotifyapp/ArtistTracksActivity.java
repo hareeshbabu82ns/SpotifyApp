@@ -1,5 +1,6 @@
 package com.har.dev.spotifyapp;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -53,6 +54,9 @@ public class ArtistTracksActivity extends AppCompatActivity
 
   @Override
   public void onTrackSelected(Uri trackUri, Uri songUri) {
-    //TODO: navigate to Song Play Activity
+    //navigate to Song Play Activity
+    final Intent intent = new Intent(this, PlayerActivity.class);
+    intent.putExtra(Utils.EXTRA_TRACK_URI, trackUri);
+    startActivity(intent);
   }
 }

@@ -18,6 +18,7 @@ public class MainActivity extends AppCompatActivity
     Toolbar bar = (Toolbar) findViewById(R.id.app_bar);
     bar.setTitle(R.string.title_artists);
     setSupportActionBar(bar);
+    SpotifyApp.getApplication().bindPlayer(null);
   }
 
   @Override
@@ -49,5 +50,11 @@ public class MainActivity extends AppCompatActivity
     final Intent intent = new Intent(this, ArtistTracksActivity.class);
     intent.putExtra(Utils.EXTRA_ARTIST_URI, uri);
     startActivity(intent);
+  }
+
+  @Override
+  protected void onDestroy() {
+    super.onDestroy();
+    SpotifyApp.getApplication().unbindPlayer();
   }
 }

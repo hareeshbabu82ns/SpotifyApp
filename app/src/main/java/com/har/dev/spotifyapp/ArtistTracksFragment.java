@@ -51,8 +51,6 @@ public class ArtistTracksFragment extends Fragment
   private ArtistTracksAdapter mAdapter;
   private OnTrackSelectedListener mListener;
   private Uri mArtistUri;
-  private PlayerService mPlayerService;
-
 
   public ArtistTracksFragment() {
     // Required empty public constructor
@@ -73,12 +71,6 @@ public class ArtistTracksFragment extends Fragment
       mArtistUri = getArguments().getParcelable(Utils.EXTRA_ARTIST_URI);
     }
     getLoaderManager().initLoader(0, null, this);
-    ((SpotifyApp) getActivity().getApplication()).bindPlayer(new SpotifyApp.OnBindPlayer() {
-      @Override
-      public void onBind(PlayerService playerService) {
-        mPlayerService = playerService;
-      }
-    });
   }
 
   @Override
@@ -93,7 +85,6 @@ public class ArtistTracksFragment extends Fragment
       mListener.onTrackSelected(trackUri, songUri);
     }
 //    PlayerService.startActionPlay(getActivity(), songUri.toString());
-    mPlayerService.handleActionPlay(songUri.toString());
   }
 
   @Override
@@ -135,8 +126,6 @@ public class ArtistTracksFragment extends Fragment
     super.onDetach();
     mListener = null;
 //    getActivity().stopService(new Intent(getActivity(), PlayerService.class));
-    if (mPlayerService != null)
-      ((SpotifyApp) getActivity().getApplication()).unbindPlayer();
   }
 
   @Override

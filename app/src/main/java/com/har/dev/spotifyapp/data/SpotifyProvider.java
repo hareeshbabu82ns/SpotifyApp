@@ -22,6 +22,8 @@ public class SpotifyProvider extends ContentProvider {
   public static final int ALBUM_TRACKS = 303;
   public static final UriMatcher URI_MATCHER = buildUriMatcher();
   private static final SQLiteQueryBuilder sAlbumTracksQueryBuilder;
+  //Query records with Track ID combining Artist + Album + Track
+  private static final SQLiteQueryBuilder sTrackDetailQueryBuilder;
 
   static {
     //Inner Join to get fields from multiple tables
@@ -34,6 +36,21 @@ public class SpotifyProvider extends ContentProvider {
             " = " + SpotifyDBContract.Track.TABLE_NAME +
             "." + SpotifyDBContract.Track.COLUMN_ALBUM_ID);
 //    sAlbumTracksQueryBuilder.setDistinct(true);
+
+    //inner join to get fields from Artist + Album + Track
+    sTrackDetailQueryBuilder = new SQLiteQueryBuilder();
+    sTrackDetailQueryBuilder.setTables(
+        SpotifyDBContract.Track.TABLE_NAME + " INNER JOIN " +
+            SpotifyDBContract.Album.TABLE_NAME +
+            " ON " + SpotifyDBContract.Album.TABLE_NAME +
+            "." + SpotifyDBContract.Album._ID +
+            " = " + SpotifyDBContract.Track.TABLE_NAME +
+            "." + SpotifyDBContract.Track.COLUMN_ALBUM_ID +
+            " INNER JOIN " + SpotifyDBContract.Artist.TABLE_NAME +
+            " ON " + SpotifyDBContract.Artist.TABLE_NAME +
+            "." + SpotifyDBContract.Artist._ID +
+            " = " + SpotifyDBContract.Track.TABLE_NAME +
+            "." + SpotifyDBContract.Track.COLUMN_ARTIST_ID);
   }
 
   private SpotifyDBHelper mDBHelper;
@@ -215,9 +232,16 @@ public class SpotifyProvider extends ContentProvider {
             projection, selection, selectionArgs, null, null, sortOrder);
         break;
       case TRACK_ID:
-        cursor = db.query(SpotifyDBContract.Track.TABLE_NAME,
-            projection, SpotifyDBContract.Track._ID + " = ?",
-            new String[]{uri.getLastPathSegment()}, null, null, sortOrder);
+        if (projection == null) {
+          cursor = db.query(SpotifyDBContract.Track.TABLE_NAME,
+              projection, SpotifyDBContract.Track._ID + " = ?",
+              new String[]{uri.getLastPathSegment()}, null, null, sortOrder);
+        } else {// use Inner Join Query
+          final String sel = SpotifyDBContract.Track.TABLE_NAME + "." +
+              SpotifyDBContract.Track._ID + " = ?";
+          cursor = sTrackDetailQueryBuilder.query(db, projection, sel,
+              new String[]{uri.getLastPathSegment()}, null, null, sortOrder);
+        }
         break;
       case ALBUM_TRACKS:
         cursor = db.query(SpotifyDBContract.Track.TABLE_NAME,

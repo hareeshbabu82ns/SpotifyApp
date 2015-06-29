@@ -2,6 +2,7 @@ package com.har.dev.spotifyapp.data;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;
+import android.database.Cursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
@@ -78,6 +79,11 @@ public class SpotifyDBContract {
     // content://com.har.dev.spotify/artists
     public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon()
         .appendPath(PATH_ARTISTS).build();
+    public long id;
+    public String name;
+    public int popularity;
+    public Uri imageUri;
+    public Uri thumbnailUri;
 
     //ITEM - URI to fetch details of given Artist ID
     // content://com.har.dev.spotify/artists/{id}
@@ -88,6 +94,38 @@ public class SpotifyDBContract {
     public static final long getArtistFromUri(Uri uri) {
       return Long.valueOf(uri.getLastPathSegment());
     }
+
+    public static final Artist buildFrom(Cursor cursor) {
+      int idx = -1;
+      final Artist artist = new Artist();
+      if ((idx = cursor.getColumnIndex(Artist.TABLE_NAME + "." + _ID)) >= 0) {
+        artist.id = cursor.getLong(idx);
+      } else if ((idx = cursor.getColumnIndex(_ID)) >= 0) {
+        artist.id = cursor.getLong(idx);
+      }
+      if ((idx = cursor.getColumnIndex(Artist.TABLE_NAME + "." + COLUMN_NAME)) >= 0) {
+        artist.name = cursor.getString(idx);
+      } else if ((idx = cursor.getColumnIndex(COLUMN_NAME)) >= 0) {
+        artist.name = cursor.getString(idx);
+      }
+      if ((idx = cursor.getColumnIndex(Artist.TABLE_NAME + "." + COLUMN_POPULARITY)) >= 0) {
+        artist.popularity = cursor.getInt(idx);
+      } else if ((idx = cursor.getColumnIndex(COLUMN_POPULARITY)) >= 0) {
+        artist.popularity = cursor.getInt(idx);
+      }
+      if ((idx = cursor.getColumnIndex(Artist.TABLE_NAME + "." + COLUMN_THUMBNAIL_URI)) >= 0) {
+        artist.thumbnailUri = Uri.parse(cursor.getString(idx));
+      } else if ((idx = cursor.getColumnIndex(COLUMN_THUMBNAIL_URI)) >= 0) {
+        artist.thumbnailUri = Uri.parse(cursor.getString(idx));
+      }
+      if ((idx = cursor.getColumnIndex(Artist.TABLE_NAME + "." + COLUMN_IMAGE_URI)) >= 0) {
+        artist.imageUri = Uri.parse(cursor.getString(idx));
+      } else if ((idx = cursor.getColumnIndex(COLUMN_IMAGE_URI)) >= 0) {
+        artist.imageUri = Uri.parse(cursor.getString(idx));
+      }
+      return artist;
+    }
+
   }
 
   public static final class Album implements BaseColumns {
@@ -120,6 +158,12 @@ public class SpotifyDBContract {
     // content://com.har.dev.spotify/Albums
     public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon()
         .appendPath(PATH_ALBUMS).build();
+    public long id;
+    public Artist artist;
+    public String name;
+    public String description;
+    public Uri imageUri;
+    public Uri thumbnailUri;
 
     //DIR - URI to fetch Albums of an Artist
     // content://com.har.dev.spotify/{artist_id}/albums
@@ -140,6 +184,43 @@ public class SpotifyDBContract {
 
     public static final long getAlbumFromUri(Uri uri) {
       return Long.valueOf(uri.getLastPathSegment());
+    }
+
+    public static final Album buildFrom(Cursor cursor) {
+      int idx = -1;
+      final Album album = new Album();
+      if ((idx = cursor.getColumnIndex(Album.TABLE_NAME + "." + _ID)) >= 0) {
+        album.id = cursor.getLong(idx);
+      } else if ((idx = cursor.getColumnIndex(_ID)) >= 0) {
+        album.id = cursor.getLong(idx);
+      }
+      if ((idx = cursor.getColumnIndex(Album.TABLE_NAME + "." + COLUMN_NAME)) >= 0) {
+        album.name = cursor.getString(idx);
+      } else if ((idx = cursor.getColumnIndex(COLUMN_NAME)) >= 0) {
+        album.name = cursor.getString(idx);
+      }
+      if ((idx = cursor.getColumnIndex(Album.TABLE_NAME + "." + COLUMN_DESCRIPTION)) >= 0) {
+        album.description = cursor.getString(idx);
+      } else if ((idx = cursor.getColumnIndex(COLUMN_DESCRIPTION)) >= 0) {
+        album.description = cursor.getString(idx);
+      }
+      if ((idx = cursor.getColumnIndex(Album.TABLE_NAME + "." + COLUMN_THUMBNAIL_URI)) >= 0) {
+        album.thumbnailUri = Uri.parse(cursor.getString(idx));
+      } else if ((idx = cursor.getColumnIndex(COLUMN_THUMBNAIL_URI)) >= 0) {
+        album.thumbnailUri = Uri.parse(cursor.getString(idx));
+      }
+      if ((idx = cursor.getColumnIndex(Album.TABLE_NAME + "." + COLUMN_IMAGE_URI)) >= 0) {
+        album.imageUri = Uri.parse(cursor.getString(idx));
+      } else if ((idx = cursor.getColumnIndex(COLUMN_IMAGE_URI)) >= 0) {
+        album.imageUri = Uri.parse(cursor.getString(idx));
+      }
+      album.artist = Artist.buildFrom(cursor);
+      if ((idx = cursor.getColumnIndex(Album.TABLE_NAME + "." + COLUMN_ARTIST_ID)) >= 0) {
+        album.artist.id = cursor.getLong(idx);
+      } else if ((idx = cursor.getColumnIndex(COLUMN_ARTIST_ID)) >= 0) {
+        album.artist.id = cursor.getLong(idx);
+      }
+      return album;
     }
   }
 
@@ -180,6 +261,13 @@ public class SpotifyDBContract {
     // content://com.har.dev.spotify/tracks
     public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon()
         .appendPath(PATH_TRACKS).build();
+    public long id;
+    public Album album;
+    public String name;
+    public String description;
+    public Uri imageUri;
+    public Uri thumbnailUri;
+    public Uri songUri;
 
     //DIR - URI to fetch Tracks of given Artist
     // content://com.har.dev.spotify/artists/{artist_id}/tracks
@@ -213,5 +301,51 @@ public class SpotifyDBContract {
       return Long.valueOf(uri.getLastPathSegment());
     }
 
+    public static final Track buildFrom(Cursor cursor) {
+      int idx = -1;
+      final Track track = new Track();
+      if ((idx = cursor.getColumnIndex(Track.TABLE_NAME + "." + _ID)) >= 0) {
+        track.id = cursor.getLong(idx);
+      } else if ((idx = cursor.getColumnIndex(_ID)) >= 0) {
+        track.id = cursor.getLong(idx);
+      }
+      if ((idx = cursor.getColumnIndex(Track.TABLE_NAME + "." + COLUMN_NAME)) >= 0) {
+        track.name = cursor.getString(idx);
+      } else if ((idx = cursor.getColumnIndex(COLUMN_NAME)) >= 0) {
+        track.name = cursor.getString(idx);
+      }
+      if ((idx = cursor.getColumnIndex(Track.TABLE_NAME + "." + COLUMN_DESCRIPTION)) >= 0) {
+        track.description = cursor.getString(idx);
+      } else if ((idx = cursor.getColumnIndex(COLUMN_DESCRIPTION)) >= 0) {
+        track.description = cursor.getString(idx);
+      }
+      if ((idx = cursor.getColumnIndex(Track.TABLE_NAME + "." + COLUMN_THUMBNAIL_URI)) >= 0) {
+        track.thumbnailUri = Uri.parse(cursor.getString(idx));
+      } else if ((idx = cursor.getColumnIndex(COLUMN_THUMBNAIL_URI)) >= 0) {
+        track.thumbnailUri = Uri.parse(cursor.getString(idx));
+      }
+      if ((idx = cursor.getColumnIndex(Track.TABLE_NAME + "." + COLUMN_IMAGE_URI)) >= 0) {
+        track.imageUri = Uri.parse(cursor.getString(idx));
+      } else if ((idx = cursor.getColumnIndex(COLUMN_IMAGE_URI)) >= 0) {
+        track.imageUri = Uri.parse(cursor.getString(idx));
+      }
+      if ((idx = cursor.getColumnIndex(Track.TABLE_NAME + "." + COLUMN_SONG_URI)) >= 0) {
+        track.songUri = Uri.parse(cursor.getString(idx));
+      } else if ((idx = cursor.getColumnIndex(COLUMN_SONG_URI)) >= 0) {
+        track.songUri = Uri.parse(cursor.getString(idx));
+      }
+      track.album = Album.buildFrom(cursor);
+      if ((idx = cursor.getColumnIndex(Track.TABLE_NAME + "." + COLUMN_ALBUM_ID)) >= 0) {
+        track.album.id = cursor.getLong(idx);
+      } else if ((idx = cursor.getColumnIndex(COLUMN_ALBUM_ID)) >= 0) {
+        track.album.id = cursor.getLong(idx);
+      }
+      if ((idx = cursor.getColumnIndex(Track.TABLE_NAME + "." + COLUMN_ARTIST_ID)) >= 0) {
+        track.album.artist.id = cursor.getLong(idx);
+      } else if ((idx = cursor.getColumnIndex(COLUMN_ARTIST_ID)) >= 0) {
+        track.album.artist.id = cursor.getLong(idx);
+      }
+      return track;
+    }
   }
 }

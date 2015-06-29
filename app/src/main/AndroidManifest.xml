@@ -44,6 +44,14 @@
         android:name="android.support.PARENT_ACTIVITY"
         android:value="com.har.dev.spotifyapp.MainActivity"/>
     </activity>
+    <activity
+      android:name=".PlayerActivity"
+      android:label="@string/title_player"
+      android:parentActivityName=".MainActivity">
+      <meta-data
+        android:name="android.support.PARENT_ACTIVITY"
+        android:value="com.har.dev.spotifyapp.MainActivity"/>
+    </activity>
 
     <service
       android:name=".PlayerService"

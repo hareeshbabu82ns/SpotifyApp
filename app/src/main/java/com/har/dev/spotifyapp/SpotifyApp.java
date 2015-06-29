@@ -12,6 +12,9 @@ import java.util.ArrayList;
  * Created by hareesh on 6/27/15.
  */
 public class SpotifyApp extends Application {
+
+  private static SpotifyApp application;
+
   private static PlayerService mPlayer;
 
   ArrayList<OnBindPlayer> onBindPlayers = new ArrayList<>();
@@ -40,18 +43,31 @@ public class SpotifyApp extends Application {
       throw new InstantiationError("Player Service is not initialized yet");
   }
 
+  public static final SpotifyApp getApplication() {
+    return application;
+  }
+
   public void bindPlayer(OnBindPlayer onBindPlayer) {
     if (mPlayer == null) {
       bindService(new Intent(this, PlayerService.class), mConnection, BIND_AUTO_CREATE);
-      onBindPlayers.add(onBindPlayer);
-    } else
-      onBindPlayer.onBind(mPlayer);
+      if (onBindPlayer != null)
+        onBindPlayers.add(onBindPlayer);
+    } else {
+      if (onBindPlayer != null)
+        onBindPlayer.onBind(mPlayer);
+    }
   }
 
   public void unbindPlayer() {
     unbindService(mConnection);
     mPlayer = null;
     onBindPlayers.clear();
+  }
+
+  @Override
+  public void onCreate() {
+    super.onCreate();
+    application = this;
   }
 
   public interface OnBindPlayer {
